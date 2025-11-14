@@ -844,6 +844,8 @@ font-family: var(--font-system);
         position: absolute;
         top: 65%;
         text-align: center;
+        min-width: 85%;
+        font-size: 1rem;
     }
     
     .burger-menu,
@@ -1125,4 +1127,5 @@ body.menu-open {
     .event-date-month {
         font-size: 0.7rem;
     }
+
 }
