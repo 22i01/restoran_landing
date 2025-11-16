@@ -454,7 +454,6 @@ header {
     justify-content: center;
     align-items: center;
     padding: 8rem;
-    background: #f8f9fa;
     gap: 2rem;
     flex-wrap: wrap;
 }
@@ -1134,3 +1133,4 @@ body.menu-open {
     }
 
 }
+
