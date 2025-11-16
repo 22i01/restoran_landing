@@ -1,15 +1,57 @@
 // Глобальная переменная для хранения данных меню
 let contentData = {};
 
+// Ключ для localStorage
+const STORAGE_KEY = 'restaurantContent';
+
 // Функция загрузки текущего меню
 async function loadContent() {
     try {
-        // Пытаемся загрузить существующий файл с меню
-        const response = await fetch('../data/content.json');
-        contentData = await response.json();
-        // Заполняем форму данными
-        populateForm();
-        alert('✅ Текущее меню загружено!');
+        console.log('Пытаюсь загрузить данные...');
+        
+        // Пробуем загрузить из localStorage
+        const savedContent = localStorage.getItem(STORAGE_KEY);
+        
+        if (savedContent) {
+            contentData = JSON.parse(savedContent);
+            console.log('Данные загружены из localStorage:', contentData);
+            populateForm();
+            alert('✅ Данные загружены из браузера!');
+            return;
+        }
+        
+        // Если в localStorage нет, пробуем загрузить из JSON файла
+        const paths = [
+            '../data/content.json',
+            './../data/content.json',
+            '/data/content.json',
+            'data/content.json'
+        ];
+        
+        let response;
+        for (let path of paths) {
+            try {
+                console.log('Пробую путь:', path);
+                response = await fetch(path);
+                if (response.ok) break;
+            } catch (e) {
+                console.log('Путь не сработал:', path);
+            }
+        }
+        
+        if (response && response.ok) {
+            contentData = await response.json();
+            console.log('Данные загружены из JSON файла:', contentData);
+            
+            // Сохраняем в localStorage для будущего использования
+            saveToStorage();
+            
+            populateForm();
+            alert('✅ Данные загружены из файла и сохранены в браузере!');
+        } else {
+            throw new Error('Файл не найден ни по одному из путей');
+        }
+        
     } catch (error) {
         console.error('Ошибка загрузки:', error);
         // Если файла нет - создаем пустую структуру
@@ -20,43 +62,93 @@ async function loadContent() {
                 items: []
             }
         };
-        alert('⚠️ Файл меню не найден. Создана новая структура.');
+        alert('⚠️ Данные не найдены. Создана новая структура.');
     }
+}
+
+// Функция сохранения в localStorage
+function saveToStorage() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(contentData, null, 2));
+        console.log('Данные сохранены в localStorage');
+        return true;
+    } catch (error) {
+        console.error('Ошибка сохранения в localStorage:', error);
+        return false;
+    }
+}
+
+// Функция автоматического сохранения при изменениях
+function autoSave() {
+    if (saveToStorage()) {
+        showSaveIndicator();
+    }
+}
+
+// Показываем индикатор сохранения
+function showSaveIndicator() {
+    const indicator = document.getElementById('saveIndicator') || createSaveIndicator();
+    indicator.style.display = 'block';
+    indicator.textContent = '✓ Сохранено';
+    indicator.style.background = '#28a745';
+    
+    setTimeout(() => {
+        indicator.style.display = 'none';
+    }, 2000);
+}
+
+// Создаем индикатор сохранения
+function createSaveIndicator() {
+    const indicator = document.createElement('div');
+    indicator.id = 'saveIndicator';
+    indicator.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        z-index: 10000;
+        display: none;
+        font-weight: bold;
+    `;
+    document.body.appendChild(indicator);
+    return indicator;
 }
 
 // Заполняем форму данными из contentData
 function populateForm() {
-    // Заполняем заголовки
+    // Меню шеф-повара
     document.getElementById('chefMenuTitle').value = contentData.chefMenu?.title || '';
     document.getElementById('chefMenuSubtitle').value = contentData.chefMenu?.subtitle || '';
     
-    // Отображаем список блюд
+    // Рендерим меню
     renderChefMenuItems();
 }
 
-// Отображаем все блюда в интерфейсе
+// === ФУНКЦИИ ДЛЯ МЕНЮ ШЕФ-ПОВАРА ===
+
 function renderChefMenuItems() {
     const container = document.getElementById('chefMenuItems');
     container.innerHTML = '';
     
-    // Проверяем есть ли блюда в меню
     if (!contentData.chefMenu?.items) {
         contentData.chefMenu = { items: [] };
     }
     
-    // Для каждого блюда создаем блок редактирования
     contentData.chefMenu.items.forEach((item, index) => {
         const itemHTML = `
             <div class="menu-item">
                 <h4>🍽️ Блюдо ${index + 1}</h4>
                 <input type="text" value="${item.name}" 
-                       onchange="updateChefMenuItem(${index}, 'name', this.value)" 
-                       placeholder="Название блюда (например: Грушевый САЛАТ)">
+                       oninput="updateChefMenuItem(${index}, 'name', this.value); autoSave();" 
+                       placeholder="Название блюда">
                 <input type="text" value="${item.price}" 
-                       onchange="updateChefMenuItem(${index}, 'price', this.value)" 
-                       placeholder="Цена (например: 11 $)">
-                <textarea onchange="updateChefMenuItem(${index}, 'description', this.value)" 
-                          placeholder="Описание блюда (ингредиенты через / )"
+                       oninput="updateChefMenuItem(${index}, 'price', this.value); autoSave();" 
+                       placeholder="Цена">
+                <textarea oninput="updateChefMenuItem(${index}, 'description', this.value); autoSave();" 
+                          placeholder="Описание блюда"
                           rows="3">${item.description}</textarea>
                 
                 <div style="margin-top: 10px;">
@@ -72,7 +164,6 @@ function renderChefMenuItems() {
     });
 }
 
-// Добавляем новое блюдо
 function addChefMenuItem() {
     if (!contentData.chefMenu) {
         contentData.chefMenu = { items: [] };
@@ -85,53 +176,52 @@ function addChefMenuItem() {
     });
     
     renderChefMenuItems();
+    autoSave();
 }
 
-// Обновляем данные блюда
 function updateChefMenuItem(index, field, value) {
     contentData.chefMenu.items[index][field] = value;
 }
 
-// Удаляем блюдо
 function removeChefMenuItem(index) {
     if (confirm('❌ Удалить это блюдо из меню?')) {
         contentData.chefMenu.items.splice(index, 1);
         renderChefMenuItems();
+        autoSave();
     }
 }
 
-// Меняем порядок блюд
 function moveChefMenuItem(index, direction) {
     const newIndex = index + direction;
     if (newIndex >= 0 && newIndex < contentData.chefMenu.items.length) {
-        // Меняем местами два элемента
         const temp = contentData.chefMenu.items[index];
         contentData.chefMenu.items[index] = contentData.chefMenu.items[newIndex];
         contentData.chefMenu.items[newIndex] = temp;
         renderChefMenuItems();
+        autoSave();
     }
 }
 
-// Сохраняем изменения в файл
-function saveContent() {
-    // Собираем данные из формы
-    contentData.chefMenu = {
-        title: document.getElementById('chefMenuTitle').value,
-        subtitle: document.getElementById('chefMenuSubtitle').value,
-        items: contentData.chefMenu?.items || []
-    };
+// Функция сброса данных (очистка localStorage)
+function resetData() {
+    if (confirm('❌ Вы уверены, что хотите сбросить все данные? Это удалит все изменения и восстановит исходные настройки.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        alert('Данные сброшены. Страница будет перезагружена.');
+        location.reload();
+    }
+}
 
-    // Создаем файл для скачивания
+// Функция экспорта данных (на случай если нужно сохранить backup)
+function exportData() {
     const dataStr = JSON.stringify(contentData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     
-    // Создаем ссылку для скачивания
     const link = document.createElement('a');
     link.href = URL.createObjectURL(dataBlob);
-    link.download = 'content.json';
+    link.download = 'restaurant-backup.json';
     link.click();
     
-    alert('📥 Файл content.json готов для скачивания!\n\nЗамените им файл в папке data/ на вашем сайте.');
+    alert('📁 Backup данных сохранен!');
 }
 
 // Загружаем контент при загрузке страницы

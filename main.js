@@ -189,10 +189,30 @@ const eventsData = [
         fullDescription: "Вас ждет: рынок фермерских продуктов от проверенных поставщиков, кулинарные баттлы между шеф-поварами, детская кулинарная школа, лекции о здоровом питании и sustainable lifestyle. Особые гости: известные нутрициологи и блогеры о здоровом питании. Для детей: мастер-классы и развлекательная программа. Событие под открытым небом в нашем саду.",
         price: "Вход свободный",
         image: "./img/event3.jpg"
-    }
+    },
+    
 ];
 
 // Функция для открытия модального окна событий
+
+function renderEventsToMainBlock() {
+    const container = document.querySelector('.main-event-date');
+    if (!container) return;
+    
+    // Очищаем контейнер и добавляем события
+    container.innerHTML = eventsData.map(event => `
+        <div class="event-item">
+            <h1>${event.day}</h1>
+            <h3>${event.month}</h3>
+            <p>${event.description}</p>
+        </div>
+    `).join('');
+    
+    console.log('События загружены в основной блок');
+}
+
+
+
 function openEventsModal() {
     const isMobile = window.innerWidth <= 768;
     
@@ -240,26 +260,34 @@ function openEventsModal() {
                     `).join('')}
                 </div>
                 
-                <div class="events-modal-actions">
-                    <button class="events-btn-primary" onclick="bookAllEvents()">
-                        🎫 Забронировать участие
-                    </button>
-                    <button class="events-btn-secondary" onclick="subscribeToEvents()">
-                        📧 Подписаться на анонсы
-                    </button>
-                </div>
+                
             </div>
         `,
         width: isMobile ? '95%' : 800,
         padding: isMobile ? '15px' : '5px',
         background: '#fff',
-        showCloseButton: false,
+        showCloseButton: true,
         showConfirmButton: false,
         customClass: {
             popup: 'custom-popup'
         }
     });
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Отображаем события в основном блоке
+    renderEventsToMainBlock();
+    
+    // Добавляем обработчик для кнопки "прочитайте больше"
+    const readMoreBtn = document.querySelector('.read-more-events');
+    if (readMoreBtn) {
+        readMoreBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openEventsModal();
+        });
+    }
+});
 
 // Функция бронирования участия
 function bookAllEvents() {

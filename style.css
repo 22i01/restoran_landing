@@ -17,6 +17,7 @@
 
 body {
     min-height: 150vh;
+    scroll-behavior: smooth;
 }
 
 /* Header */
@@ -95,12 +96,11 @@ header {
 
 .header-second-text {
     position: absolute;
-    top: 70%;
+    top: 80%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-weight: 400;
     color: lightgray;
-    /* max-width: 40%; */
     text-align: center;
 }
 
@@ -250,6 +250,10 @@ header {
 
 .event-item p {
     font-family: var(--font-system);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .main-event a {
