@@ -1,3 +1,4 @@
+
 class MultipleCounters {
     constructor() {
         this.counters = [
@@ -6,42 +7,52 @@ class MultipleCounters {
             { id: 'counter3', target: 450, duration: 2200 }
         ];
         this.animated = false;
+        this.observer = null;
         
         this.init();
     }
     
     init() {
-        const observer = new IntersectionObserver((entries) => {
+        const counterSection = document.querySelector('.counter-section');
+        if (!counterSection) return;
+        
+        this.observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !this.animated) {
                     this.startAllAnimations();
                     this.animated = true;
+                    this.observer.disconnect();
                 }
             });
-        }, { threshold: 0.5 });
+        }, { 
+            threshold: 0.5,
+            rootMargin: '50px'
+        });
         
-        observer.observe(document.querySelector('.counter-section'));
+        this.observer.observe(counterSection);
     }
     
     startAllAnimations() {
-        this.counters.forEach(counter => {
-            this.animateCounter(counter.id, counter.target, counter.duration);
+        this.counters.forEach((counter, index) => {
+            setTimeout(() => {
+                this.animateCounter(counter.id, counter.target, counter.duration);
+            }, index * 200);
         });
     }
     
     animateCounter(elementId, target, duration) {
         const element = document.getElementById(elementId);
-        let start = 0;
+        if (!element) return;
+        
         const startTime = performance.now();
         
         const animate = (currentTime) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             
-            // Easing function для плавности
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            
+            const easeOut = 1 - Math.pow(1 - progress, 4);
             const current = Math.floor(easeOut * target);
+            
             element.textContent = current.toLocaleString();
             
             if (progress < 1) {
@@ -55,107 +66,90 @@ class MultipleCounters {
     }
 }
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', function() {
-    new MultipleCounters();
-});
-
-
-document.addEventListener('DOMContentLoaded', function() {
+function initMobileMenu() {
     const burgerMenu = document.querySelector('.burger-menu');
     const mobileMenu = document.querySelector('.mobile-menu');
     const closeMenu = document.querySelector('.mobile-menu-close');
     const body = document.body;
     const mobileNavLinks = document.querySelectorAll('.mobile-nav a');
     
-    // Open mobile menu
-    if (burgerMenu) {
-        burgerMenu.addEventListener('click', function() {
-            mobileMenu.classList.add('active');
-            body.classList.add('menu-open');
-        });
-    }
+    if (!burgerMenu || !mobileMenu) return;
     
-    // Close mobile menu
-    if (closeMenu) {
-        closeMenu.addEventListener('click', function() {
-            mobileMenu.classList.remove('active');
-            body.classList.remove('menu-open');
-        });
-    }
+    const openMenu = () => {
+        mobileMenu.classList.add('active');
+        body.classList.add('menu-open');
+    };
     
-    // Close menu when clicking on links
+    const closeMenuHandler = () => {
+        mobileMenu.classList.remove('active');
+        body.classList.remove('menu-open');
+    };
+    
+    burgerMenu.addEventListener('click', openMenu);
+    closeMenu.addEventListener('click', closeMenuHandler);
+    
     mobileNavLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            mobileMenu.classList.remove('active');
-            body.classList.remove('menu-open');
-        });
+        link.addEventListener('click', closeMenuHandler);
     });
     
-    // Close menu when clicking outside
-    if (mobileMenu) {
-        mobileMenu.addEventListener('click', function(e) {
-            if (e.target === mobileMenu) {
-                mobileMenu.classList.remove('active');
-                body.classList.remove('menu-open');
-            }
-        });
-    }
-    
-    // Close menu on Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            mobileMenu.classList.remove('active');
-            body.classList.remove('menu-open');
+    mobileMenu.addEventListener('click', (e) => {
+        if (e.target === mobileMenu) {
+            closeMenuHandler();
         }
     });
-});
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Обработчик для всех ссылок "прочитайте больше"
-    document.querySelectorAll('.read-more').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault(); // Отменяем переход по ссылке
-            
-            const title = this.getAttribute('data-title');
-            const content = this.getAttribute('data-content');
-            const image = this.getAttribute('data-image');
-            
-            Swal.fire({
-                title: title,
-                html: `
-                    <div class="modal-content-wrapper">
-                        ${image ? `<img src="${image}" alt="${title}" class="modal-image">` : ''}
-                        <div class="modal-text-content">
-                            ${content}
-                        </div>
-                        <div class="modal-contact-info">
-                            <h4 class="modal-contact-title">📞 Хотите узнать больше?</h4>
-                            <p class="modal-contact-text">Посетите нас лично или свяжитесь по телефону: <strong>+7 (999) 123-45-67</strong></p>
-                        </div>
-                    </div>
-                `,
-                width: 700,
-                padding: '5px',
-                background: '#fff',
-                showCloseButton: false,
-                showConfirmButton: true,
-                confirmButtonText: 'Закрыть',
-                confirmButtonColor: '#000',
-                customClass: {
-                    popup: 'custom-popup',
-                    title: 'swal-title-custom'
-                }
-            });
-        });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeMenuHandler();
+        }
     });
-});
+}
 
+function escapeHtml(unsafe) {
+    if (typeof unsafe !== 'string') return unsafe;
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
+function showStoryModal(title, content, image) {
+    const isMobile = window.innerWidth <= 768;
+    
+    Swal.fire({
+        title: escapeHtml(title),
+        html: `
+            <div class="modal-content-wrapper">
+                ${image ? `<img src="${image}" alt="${escapeHtml(title)}" class="modal-image" loading="lazy">` : ''}
+                <div class="modal-text-content">
+                    ${escapeHtml(content)}
+                </div>
+                <div class="modal-contact-info">
+                    <h4 class="modal-contact-title">📞 Хотите узнать больше?</h4>
+                    <p class="modal-contact-text">Посетите нас лично или свяжитесь по телефону: <strong>+33 1 23 45 67 89</strong></p>
+                </div>
+            </div>
+        `,
+        width: isMobile ? '95%' : 700,
+        padding: isMobile ? '15px' : '5px',
+        background: '#fff',
+        showCloseButton: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Закрыть',
+        confirmButtonColor: '#000',
+        customClass: {
+            popup: 'custom-popup',
+            title: 'swal-title-custom'
+        },
+        didOpen: () => {
+            const modal = document.querySelector('.swal2-popup');
+            if (modal) modal.scrollTop = 0;
+        }
+    });
+}
 
-// Данные событий
 const eventsData = [
     {
         day: "25",
@@ -189,29 +183,25 @@ const eventsData = [
         fullDescription: "Вас ждет: рынок фермерских продуктов от проверенных поставщиков, кулинарные баттлы между шеф-поварами, детская кулинарная школа, лекции о здоровом питании и sustainable lifestyle. Особые гости: известные нутрициологи и блогеры о здоровом питании. Для детей: мастер-классы и развлекательная программа. Событие под открытым небом в нашем саду.",
         price: "Вход свободный",
         image: "./img/event3.jpg"
-    },
-    
+    }
 ];
-
-// Функция для открытия модального окна событий
 
 function renderEventsToMainBlock() {
     const container = document.querySelector('.main-event-date');
     if (!container) return;
     
-    // Очищаем контейнер и добавляем события
-    container.innerHTML = eventsData.map(event => `
-        <div class="event-item">
-            <h1>${event.day}</h1>
-            <h3>${event.month}</h3>
-            <p>${event.description}</p>
-        </div>
-    `).join('');
-    
-    console.log('События загружены в основной блок');
+    try {
+        container.innerHTML = eventsData.map(event => `
+            <div class="event-item">
+                <h1>${escapeHtml(event.day)}</h1>
+                <h3>${escapeHtml(event.month)}</h3>
+                <p>${escapeHtml(event.description)}</p>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error rendering events:', error);
+    }
 }
-
-
 
 function openEventsModal() {
     const isMobile = window.innerWidth <= 768;
@@ -229,23 +219,23 @@ function openEventsModal() {
                         <div class="event-modal-item">
                             <div class="event-modal-header">
                                 <div class="event-date-circle">
-                                    <div class="event-date-day">${event.day}</div>
-                                    <div class="event-date-month">${event.month}</div>
+                                    <div class="event-date-day">${escapeHtml(event.day)}</div>
+                                    <div class="event-date-month">${escapeHtml(event.month)}</div>
                                 </div>
                                 <div class="event-title-section">
-                                    <h3 class="event-modal-title">${event.title}</h3>
-                                    <p class="event-modal-time">🕐 ${event.time}</p>
+                                    <h3 class="event-modal-title">${escapeHtml(event.title)}</h3>
+                                    <p class="event-modal-time">🕐 ${escapeHtml(event.time)}</p>
                                 </div>
                             </div>
                             
                             <div class="event-modal-description">
-                                <p>${event.fullDescription}</p>
+                                <p>${escapeHtml(event.fullDescription)}</p>
                             </div>
                             
                             <div class="event-details-grid">
                                 <div class="event-detail-item">
                                     <strong>📍 Место:</strong>
-                                    <span>${event.location}</span>
+                                    <span>${escapeHtml(event.location)}</span>
                                 </div>
                                 <div class="event-detail-item">
                                     <strong>👥 Формат:</strong>
@@ -254,13 +244,11 @@ function openEventsModal() {
                             </div>
                             
                             <div class="event-modal-price">
-                                ${event.price}
+                                ${escapeHtml(event.price)}
                             </div>
                         </div>
                     `).join('')}
                 </div>
-                
-                
             </div>
         `,
         width: isMobile ? '95%' : 800,
@@ -272,16 +260,36 @@ function openEventsModal() {
         confirmButtonColor: '#000',
         customClass: {
             popup: 'custom-popup'
+        },
+        didOpen: () => {
+            const modal = document.querySelector('.swal2-popup');
+            if (modal) modal.scrollTop = 0;
         }
     });
 }
 
+function initModals() {
+    document.querySelectorAll('.read-more').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const title = this.getAttribute('data-title');
+            const content = this.getAttribute('data-content');
+            const image = this.getAttribute('data-image');
+            
+            if (!title || !content) {
+                console.warn('Missing modal data:', { title, content, image });
+                return;
+            }
+            
+            showStoryModal(title, content, image);
+        });
+    });
+}
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Отображаем события в основном блоке
+function initEvents() {
     renderEventsToMainBlock();
     
-    // Добавляем обработчик для кнопки "прочитайте больше"
     const readMoreBtn = document.querySelector('.read-more-events');
     if (readMoreBtn) {
         readMoreBtn.addEventListener('click', function(e) {
@@ -289,128 +297,17 @@ document.addEventListener('DOMContentLoaded', function() {
             openEventsModal();
         });
     }
-});
-
-// Функция бронирования участия
-function bookAllEvents() {
-    Swal.fire({
-        title: 'Бронирование участия',
-        html: `
-            <div style="text-align: left;">
-                <p>Выберите события, в которых хотите участвовать:</p>
-                
-                <div style="margin: 1rem 0;">
-                    ${eventsData.map((event, index) => `
-                        <label style="display: block; margin: 0.5rem 0; cursor: pointer;">
-                            <input type="checkbox" id="event-${index}" style="margin-right: 0.5rem;">
-                            ${event.day} ${event.month} - ${event.title} (${event.price})
-                        </label>
-                    `).join('')}
-                </div>
-                
-                <div style="margin-top: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Ваше имя:</label>
-                    <input type="text" id="eventsUserName" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1rem;" placeholder="Введите ваше имя">
-                    
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Телефон:</label>
-                    <input type="tel" id="eventsUserPhone" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 4px;" placeholder="+7 (XXX) XXX-XX-XX">
-                </div>
-            </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Отправить заявку',
-        cancelButtonText: 'Отмена',
-        preConfirm: () => {
-            const name = document.getElementById('eventsUserName').value;
-            const phone = document.getElementById('eventsUserPhone').value;
-            const selectedEvents = eventsData.filter((_, index) => 
-                document.getElementById(`event-${index}`).checked
-            );
-            
-            if (!name || !phone) {
-                Swal.showValidationMessage('Пожалуйста, заполните все обязательные поля');
-                return false;
-            }
-            
-            if (selectedEvents.length === 0) {
-                Swal.showValidationMessage('Пожалуйста, выберите хотя бы одно событие');
-                return false;
-            }
-            
-            return { name, phone, events: selectedEvents };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: 'Заявка отправлена!',
-                text: 'Мы свяжемся с вами в ближайшее время для подтверждения бронирования.',
-                icon: 'success',
-                confirmButtonText: 'Отлично'
-            });
-        }
-    });
 }
 
-// Функция подписки на анонсы
-function subscribeToEvents() {
-    Swal.fire({
-        title: 'Подписка на анонсы событий',
-        html: `
-            <div style="text-align: left;">
-                <p>Получайте первыми информацию о новых событиях, специальных предложениях и эксклюзивных мероприятиях.</p>
-                
-                <div style="margin-top: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email:</label>
-                    <input type="email" id="subscribeEmail" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1rem;" placeholder="your@email.com">
-                    
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Имя:</label>
-                    <input type="text" id="subscribeName" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 4px;" placeholder="Ваше имя">
-                </div>
-                
-                <label style="display: block; margin: 1rem 0; cursor: pointer;">
-                    <input type="checkbox" id="subscribeAgree" style="margin-right: 0.5rem;">
-                    Я согласен получать информационные рассылки
-                </label>
-            </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Подписаться',
-        cancelButtonText: 'Отмена',
-        preConfirm: () => {
-            const email = document.getElementById('subscribeEmail').value;
-            const name = document.getElementById('subscribeName').value;
-            const agree = document.getElementById('subscribeAgree').checked;
-            
-            if (!email || !name) {
-                Swal.showValidationMessage('Пожалуйста, заполните все поля');
-                return false;
-            }
-            
-            if (!agree) {
-                Swal.showValidationMessage('Необходимо согласие на рассылку');
-                return false;
-            }
-            
-            return { email, name };
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: 'Подписка оформлена!',
-                text: 'Теперь вы будете первыми узнавать о наших событиях.',
-                icon: 'success',
-                confirmButtonText: 'Отлично'
-            });
-        }
-    });
-}
-
-// Инициализация обработчика событий
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработчик для кнопки "прочитайте больше" в событиях
-    document.querySelector('.read-more-events')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        openEventsModal();
-    });
-
+    try {
+        new MultipleCounters();
+        initMobileMenu();
+        initModals();
+        initEvents();
+        
+        console.log('All modules initialized successfully');
+    } catch (error) {
+        console.error('Error during initialization:', error);
+    }
 });

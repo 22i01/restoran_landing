@@ -4,10 +4,31 @@
 <head>
   <meta charset="UTF-8" />
   <title>Ресторан здорового питания в Париже | Свежие блюда от шеф-повара</title>
-  <meta name="description" content="Эксклюзивный ресторан здорового питания в Париже. Свежие сезонные блюда от шеф-повара. Бронируйте столик онлайн.">
-  <meta name="keywords" content="ресторан Париж, здоровое питание, шеф-повар...">
+  <meta name="description"
+    content="Эксклюзивный ресторан здорового питания в Париже. Свежие сезонные блюда от шеф-повара. Бронируйте столик онлайн.">
+  <meta name="keywords" content="ресторан Париж, здоровое питание, французская кухня, шеф-повар, свежие продукты">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="./style.css">
+  <meta property="og:title" content="Ресторан здорового питания в Париже">
+  <meta property="og:description" content="Эксклюзивный ресторан здорового питания в Париже">
+  <meta property="og:image" content="./img/og-image.jpg">
+  
+
+    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/main-story.css">
+    <link rel="stylesheet" href="./css/events.css">
+    <link rel="stylesheet" href="./css/swiper.css">
+    <link rel="stylesheet" href="./css/chef-menu.css">
+    <link rel="stylesheet" href="./css/gallery.css">
+    <link rel="stylesheet" href="./css/counter.css">
+    <link rel="stylesheet" href="./css/contact.css">
+    <link rel="stylesheet" href="./css/footer.css">
+    <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/mobile-menu.css">
+    <link rel="stylesheet" href="./css/responsive.css">
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link
@@ -19,7 +40,7 @@
 <body>
 
   <div class="mobile-menu">
-    <button class="mobile-menu-close">&times;</button>
+    <button class="mobile-menu-close" aria-label="Открыть меню">&times;</button>
     <nav class="mobile-nav">
       <a href="#about">О нас</a>
       <a href="#story">История</a>
@@ -47,25 +68,24 @@
 
   <main>
 
-    <div class="main-about" id="about">
+    <section class="main-about" id="about">
       <h3>о нашем ресторане</h3>
       <h1>Эксклюзивный <b> <i> ресторан в Париже </i></b>,
         лучший способ отведать потрясающие
         блюда от лучших поваров города.
         <b> <i> Отличная атмосфера.</i></b>
       </h1>
-    </div>
+    </section>
 
 
-    <div class="main-story" id="story">
-      <img src="./img/main-block1.jpg" alt="" loading="lazy"  data-aos="fade-bottom"
-     data-aos-offset="300"
-     data-aos-easing="ease-in-sine">
+    <section class="main-story" id="story">
+      <img src="./img/main-block1.jpg" alt="История ресторана" loading="lazy" data-aos="fade-bottom" data-aos-offset="300"
+        data-aos-easing="ease-in-sine">
       <div class="main-story-text">
         <h3>История</h3>
         <h2>Странная история появления здорового питания</h2>
-        <p>Полная история о том, как зародилось движение здорового питания в нашем ресторане. 
-          Началось все с небольшого семейного бизнеса и выросло 
+        <p>Полная история о том, как зародилось движение здорового питания в нашем ресторане.
+          Началось все с небольшого семейного бизнеса и выросло
           в целую философию питания.</p>
         <a href="#" class="read-more" data-title="История здорового питания"
           data-content="Полная история о том, как зародилось движение здорового питания в нашем ресторане. Началось все с небольшого семейного бизнеса и выросло в целую философию питания."
@@ -74,15 +94,14 @@
         </a>
       </div>
 
-      <img src="./img/main_block2.jpeg" alt="" loading="lazy" data-aos="fade-bottom"
-     data-aos-offset="300"
-     data-aos-easing="ease-in-sine">
+      <img src="./img/main_block2.jpeg" alt="Наше сообщество" loading="lazy" data-aos="fade-bottom" data-aos-offset="300"
+        data-aos-easing="ease-in-sine">
       <div class="main-story-text">
         <h3>сообщество</h3>
         <h2>Здоровое питание в соцсетях, с нами интересно</h2>
-        <p>Присоединяйтесь к нашему растущему сообществу в социальных сетях! 
+        <p>Присоединяйтесь к нашему растущему сообществу в социальных сетях!
           Делитесь рецептами, участвуйте в мастер-классах и
-           становитесь частью семьи здорового питания.</p>
+          становитесь частью семьи здорового питания.</p>
         <a href="#" class="read-more" data-title="Наше сообщество"
           data-content="Присоединяйтесь к нашему растущему сообществу в социальных сетях! Делитесь рецептами, участвуйте в мастер-классах и становитесь частью семьи здорового питания."
           data-image="./img/main_block2.jpeg">
@@ -90,41 +109,40 @@
         </a>
       </div>
 
-      <img src="./img/main_block3.jpeg" alt="" loading="lazy" data-aos="fade-bottom"
-     data-aos-offset="300"
-     data-aos-easing="ease-in-sine">
+      <img src="./img/main_block3.jpeg" alt="Философия нашего ресторана" loading="lazy" data-aos="fade-bottom" data-aos-offset="300"
+        data-aos-easing="ease-in-sine">
       <div class="main-story-text">
         <h3>философия</h3>
         <h2>Только лучшая еда, лучшие музыканты, лучшие гости</h2>
         <p>Мы верим, что еда - это не просто питание, а искусство.
-           Только свежие продукты, только сезонные ингредиенты и 
-           только любовь в каждом блюде.</p>
+          Только свежие продукты, только сезонные ингредиенты и
+          только любовь в каждом блюде.</p>
         <a href="#" class="read-more" data-title="Наша философия"
           data-content="Мы верим, что еда - это не просто питание, а искусство. Только свежие продукты, только сезонные ингредиенты и только любовь в каждом блюде."
           data-image="./img/main_block3.jpeg">
           прочитайте больше
         </a>
       </div>
-    </div>
+    </section>
 
     <!-- EVENT BLOCK -->
 
-    <div class="main-event" id="events">
-    <h3>События</h3>
-    <h1>События здорового питания</h1>
-    <div class="main-event-date" id="events-container">
-<!-- События будут вставлены здесь динамически -->
-</div>
-    <a href="#" class="read-more-events">прочитайте больше</a>
-</div>
+    <section class="main-event" id="events">
+      <h3>События</h3>
+      <h1>События здорового питания</h1>
+      <div class="main-event-date" id="events-container">
+        <!-- События будут вставлены здесь динамически -->
+      </div>
+      <a href="#" class="read-more-events">прочитайте больше</a>
+    </section>
 
     <!-- SWIPER GALLERY -->
 
-    <div class="swiper mySwiper">
+    <section class="swiper mySwiper">
       <div class="swiper-wrapper">
 
         <div class="swiper-slide">
-          <img src="./img/swiper1.jpg" alt="Ресторан - интерьер" loading="lazy"/>
+          <img src="./img/swiper1.jpg" alt="Ресторан - интерьер" loading="lazy" />
           <div class="slide-content">
             <h3>Обратная связь</h3>
             <p>Эксклюзивный <b>ресторан в Париже</b> ,
@@ -136,7 +154,7 @@
         </div>
 
         <div class="swiper-slide">
-          <img src="./img/swiper2.jpeg" alt="Ресторан - терраса" loading="lazy"/>
+          <img src="./img/swiper2.jpeg" alt="Ресторан - терраса" loading="lazy" />
           <div class="slide-content">
             <h3>Обратная связь</h3>
             <p>Эксклюзивный <i><b>ресторан в Париже</b></i> ,
@@ -149,24 +167,23 @@
 
       </div>
       <div class="swiper-pagination"></div>
-    </div>
+    </section>
 
 
     <!-- SHEF MENU -->
 
-    <div class="shef-block" id="menu" data-aos="fade-up"
-     data-aos-duration="500">
+    <section class="shef-block" id="menu" data-aos="fade-up" data-aos-duration="500">
       <h3>наше меню</h3>
       <h1>Вкусно от шеф-повара</h1>
       <div class="shef-block-menu">
         <!-- Данные из админки -->
       </div>
 
-    </div>
+    </section>
 
     <!-- PHOTO GALLERY -->
 
-    <div class="photo-gallery" id="gallery">
+    <section class="photo-gallery" id="gallery">
       <div class="left-photo">
         <img src="./img/swiper1.jpg" alt="Основное фото" loading="lazy">
       </div>
@@ -179,7 +196,7 @@
       <div class="right-bottom-right">
         <img src="./img/main-block1.jpg" alt="Нижнее правое фото" loading="lazy">
       </div>
-    </div>
+    </section>
 
 
     <!-- WE COOKING  -->
@@ -187,7 +204,7 @@
     <section class="counter-section">
       <div class="counter-container">
         <div class="counter-image">
-          <img src="./img/chicken-leg-chicken-svgrepo-com.svg" alt="" loading="lazy">
+          <img src="./img/chicken-leg-chicken-svgrepo-com.svg" alt="Мы готовим" loading="lazy">
         </div>
         <div class="counter-number">
           <span id="counter1" class="counter">0</span>
@@ -199,7 +216,7 @@
 
       <div class="counter-container">
         <div class="counter-image">
-          <img src="./img/plate-knife-and-fork-svgrepo-com.svg" alt="" loading="lazy">
+          <img src="./img/plate-knife-and-fork-svgrepo-com.svg" alt="Мы готовим" loading="lazy">
         </div>
         <div class="counter-number">
           <span id="counter2" class="counter">0</span>
@@ -211,7 +228,7 @@
 
       <div class="counter-container">
         <div class="counter-image">
-          <img src="./img/croissant-svgrepo-com.svg" alt="" loading="lazy">
+          <img src="./img/croissant-svgrepo-com.svg" alt="Мы готовим" loading="lazy">
         </div>
         <div class="counter-number">
           <span id="counter3" class="counter">0</span>
@@ -225,7 +242,7 @@
       <h3>мы готовим каждый день</h3>
 
     </section>
-    
+
 
     <!-- CONNECT US -->
 
@@ -233,41 +250,43 @@
       <div class="connect-container">
         <h3>свяжитесь с нами</h3>
         <h1>Связаться</h1>
-        <input type="text" placeholder="Введите Ваше имя" required>
-        <input type="email" placeholder="Введите Email" required>
+        
+        <input type="text" name="Имя" placeholder="Введите Ваше имя" required>
+        
+        <input type="email" name="mail" placeholder="Введите Email" required>
         <button type="submit">отправить</button>
       </div>
 
 
     </section>
 
-    <!-- CONNECT US -->
+    <!-- FOOTER -->
 
     <footer class="footer">
-  <div class="footer-content">
-    <div class="footer-section">
-      <h4>Контакты</h4>
-      <p>Париж, ул. Примерная, 123</p>
-      <p>+33 1 23 45 67 89</p>
-      <p>info@restaurant.fr</p>
-    </div>
-    <div class="footer-section">
-      <h4>Часы работы</h4>
-      <p>Пн-Пт: 12:00-23:00</p>
-      <p>Сб-Вс: 11:00-00:00</p>
-    </div>
-    <div class="footer-section">
-      <h4>Соцсети</h4>
-      <div class="social-links">
-        <a href="#">Instagram</a>
-        <a href="#">Facebook</a>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Контакты</h4>
+          <p>Париж, ул. Примерная, 123</p>
+          <p>+33 1 23 45 67 89</p>
+          <p>info@restaurant.fr</p>
+        </div>
+        <div class="footer-section">
+          <h4>Часы работы</h4>
+          <p>Пн-Пт: 12:00-23:00</p>
+          <p>Сб-Вс: 11:00-00:00</p>
+        </div>
+        <div class="footer-section">
+          <h4>Соцсети</h4>
+          <div class="social-links">
+            <a href="#">Instagram</a>
+            <a href="#">Facebook</a>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2025 Ресторан здорового питания. Все права защищены.</p>
-  </div>
-</footer>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Ресторан здорового питания. Все права защищены.</p>
+      </div>
+    </footer>
 
 
   </main>
