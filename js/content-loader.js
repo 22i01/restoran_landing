@@ -60,15 +60,61 @@ class ContentLoader {
         this.renderChefMenuItems(menuContainer, chefMenu.items);
     }
 
-    renderChefMenuItems(container, items) {
-        if (!items || !Array.isArray(items) || !container) return;
+   renderChefMenuItems(container, items) {
+    if (!items || !Array.isArray(items) || !container) return;
 
-        container.innerHTML = items.map(item => `
-            <div class="shef-menu-item">
-                <h3>${item.name} / ${item.price}</h3>
-                <p>${item.description}</p>
-            </div>
-        `).join('');
+    container.innerHTML = items.map(item => `
+        <div class="shef-menu-item">
+            <h3>${item.name} / ${item.price}</h3>
+            <p>${item.description}</p>
+            <button class="add-to-cart-plus" 
+                    data-name="${this.escapeHtml(item.name)}" 
+                    data-price="${this.escapeHtml(item.price)}"
+                    data-description="${this.escapeHtml(item.description)}">
+                +
+            </button>
+        </div>
+    `).join('');
+
+    // Добавляем обработчики для кнопок
+    this.setupAddToCartButtons();
+}
+
+// Метод для настройки кнопок добавления в корзину
+// Метод для настройки кнопок добавления в корзину
+// Метод для настройки кнопок добавления в корзину
+setupAddToCartButtons() {
+    // Удаляем старые обработчики
+    const oldButtons = document.querySelectorAll('.add-to-cart-plus');
+    oldButtons.forEach(button => {
+        button.replaceWith(button.cloneNode(true));
+    });
+
+    // Назначаем новые обработчики
+    document.querySelectorAll('.add-to-cart-plus').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const item = {
+                name: e.target.dataset.name,
+                price: e.target.dataset.price,
+                description: e.target.dataset.description
+            };
+            
+            if (window.cart) {
+                window.cart.addItem(item);
+            }
+        });
+    });
+}
+
+    // Вспомогательный метод для экранирования HTML
+    escapeHtml(unsafe) {
+        if (typeof unsafe !== 'string') return unsafe;
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     renderEvents() {
@@ -151,8 +197,11 @@ function addRefreshButton() {
             cursor: pointer;
         `;
         refreshBtn.onclick = () => {
+            localStorage.removeItem('restaurantContent');
             contentLoader.refreshData();
-            location.reload();
+            setTimeout(() => {
+                location.reload();
+            }, 500);
         };
         document.body.appendChild(refreshBtn);
     }

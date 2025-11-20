@@ -206,51 +206,118 @@ function renderEventsToMainBlock() {
 function openEventsModal() {
     const isMobile = window.innerWidth <= 768;
     
+    // Создаем элементы через DOM вместо HTML строки
+    const modalContent = document.createElement('div');
+    modalContent.className = 'events-modal-content';
+    
+    // Создаем вступительный текст
+    const introText = document.createElement('p');
+    introText.className = 'events-modal-intro';
+    introText.textContent = 'Присоединяйтесь к нашим уникальным событиям и откройте для себя мир здорового питания';
+    modalContent.appendChild(introText);
+    
+    // Создаем контейнер для списка событий
+    const eventsList = document.createElement('div');
+    eventsList.className = 'events-list';
+    
+    // Добавляем каждое событие
+    eventsData.forEach(event => {
+        const eventItem = document.createElement('div');
+        eventItem.className = 'event-modal-item';
+        
+        // Заголовок события
+        const eventHeader = document.createElement('div');
+        eventHeader.className = 'event-modal-header';
+        
+        // Круг с датой
+        const dateCircle = document.createElement('div');
+        dateCircle.className = 'event-date-circle';
+        
+        const dateDay = document.createElement('div');
+        dateDay.className = 'event-date-day';
+        dateDay.textContent = event.day;
+        
+        const dateMonth = document.createElement('div');
+        dateMonth.className = 'event-date-month';
+        dateMonth.textContent = event.month;
+        
+        dateCircle.appendChild(dateDay);
+        dateCircle.appendChild(dateMonth);
+        
+        // Информация о событии
+        const titleSection = document.createElement('div');
+        titleSection.className = 'event-title-section';
+        
+        const eventTitle = document.createElement('h3');
+        eventTitle.className = 'event-modal-title';
+        eventTitle.textContent = event.title;
+        
+        const eventTime = document.createElement('p');
+        eventTime.className = 'event-modal-time';
+        eventTime.textContent = `🕐 ${event.time}`;
+        
+        titleSection.appendChild(eventTitle);
+        titleSection.appendChild(eventTime);
+        
+        eventHeader.appendChild(dateCircle);
+        eventHeader.appendChild(titleSection);
+        
+        // Описание события
+        const eventDescription = document.createElement('div');
+        eventDescription.className = 'event-modal-description';
+        
+        const descriptionText = document.createElement('p');
+        descriptionText.textContent = event.fullDescription;
+        eventDescription.appendChild(descriptionText);
+        
+        // Детали события
+        const eventDetails = document.createElement('div');
+        eventDetails.className = 'event-details-grid';
+        
+        const locationDetail = document.createElement('div');
+        locationDetail.className = 'event-detail-item';
+        
+        const locationLabel = document.createElement('strong');
+        locationLabel.textContent = '📍 Место:';
+        const locationValue = document.createElement('span');
+        locationValue.textContent = event.location;
+        
+        locationDetail.appendChild(locationLabel);
+        locationDetail.appendChild(locationValue);
+        
+        const formatDetail = document.createElement('div');
+        formatDetail.className = 'event-detail-item';
+        
+        const formatLabel = document.createElement('strong');
+        formatLabel.textContent = '👥 Формат:';
+        const formatValue = document.createElement('span');
+        formatValue.textContent = event.price === "Вход свободный" ? "Открытое мероприятие" : "Мастер-класс";
+        
+        formatDetail.appendChild(formatLabel);
+        formatDetail.appendChild(formatValue);
+        
+        eventDetails.appendChild(locationDetail);
+        eventDetails.appendChild(formatDetail);
+        
+        // Цена
+        const eventPrice = document.createElement('div');
+        eventPrice.className = 'event-modal-price';
+        eventPrice.textContent = event.price;
+        
+        // Собираем все вместе
+        eventItem.appendChild(eventHeader);
+        eventItem.appendChild(eventDescription);
+        eventItem.appendChild(eventDetails);
+        eventItem.appendChild(eventPrice);
+        
+        eventsList.appendChild(eventItem);
+    });
+    
+    modalContent.appendChild(eventsList);
+    
     Swal.fire({
         title: 'Предстоящие события',
-        html: `
-            <div class="events-modal-content">
-                <p style="text-align: center; margin-bottom: 2rem; color: #666;">
-                    Присоединяйтесь к нашим уникальным событиям и откройте для себя мир здорового питания
-                </p>
-                
-                <div class="events-list">
-                    ${eventsData.map(event => `
-                        <div class="event-modal-item">
-                            <div class="event-modal-header">
-                                <div class="event-date-circle">
-                                    <div class="event-date-day">${escapeHtml(event.day)}</div>
-                                    <div class="event-date-month">${escapeHtml(event.month)}</div>
-                                </div>
-                                <div class="event-title-section">
-                                    <h3 class="event-modal-title">${escapeHtml(event.title)}</h3>
-                                    <p class="event-modal-time">🕐 ${escapeHtml(event.time)}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="event-modal-description">
-                                <p>${escapeHtml(event.fullDescription)}</p>
-                            </div>
-                            
-                            <div class="event-details-grid">
-                                <div class="event-detail-item">
-                                    <strong>📍 Место:</strong>
-                                    <span>${escapeHtml(event.location)}</span>
-                                </div>
-                                <div class="event-detail-item">
-                                    <strong>👥 Формат:</strong>
-                                    <span>${event.price === "Вход свободный" ? "Открытое мероприятие" : "Мастер-класс"}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="event-modal-price">
-                                ${escapeHtml(event.price)}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `,
+        html: modalContent,
         width: isMobile ? '95%' : 800,
         padding: isMobile ? '15px' : '5px',
         background: '#fff',
