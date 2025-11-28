@@ -399,8 +399,30 @@ document.addEventListener('DOMContentLoaded', function() {
         threshold: 0.1 // Сработает, когда 10% элемента видно
     });
 
-    // Наблюдаем за каждым изображением
+
     images.forEach(img => {
         observer.observe(img);
     });
 });
+
+// Более современный подход с Intersection Observer
+function initScrollAnimation() {
+    const gallery = document.getElementById('gallery');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+                observer.unobserve(entry.target); // Останавливаем наблюдение после анимации
+            }
+        });
+    }, {
+        threshold: 0.3, // Срабатывает когда 30% элемента видно
+        rootMargin: '0px 0px -50px 0px' // Небольшой отступ снизу
+    });
+
+    observer.observe(gallery);
+}
+
+// Запускаем когда DOM загружен
+document.addEventListener('DOMContentLoaded', initScrollAnimation);

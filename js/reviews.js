@@ -197,14 +197,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализация позиции
     setTrackPosition();
 
-    // Убираем индикатор через 5 секунд
-    setTimeout(() => {
-        const indicator = document.querySelector('.scroll-indicator');
-        if (indicator) {
-            indicator.style.opacity = '0';
-            setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 1000);
-        }
-    }, 5000);
+    
 });

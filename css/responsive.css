@@ -116,7 +116,7 @@
         font-size: 2.5rem;
         min-width: 80vw;
         position: absolute;
-        top: 40%;
+        top: 50%;
     }
     
     .header-second-text {
@@ -166,7 +166,7 @@
     
     .header-second-text {
         position: absolute;
-        top: 65%;
+        top: 70%;
         text-align: center;
         min-width: 85%;
         font-size: 1rem;
